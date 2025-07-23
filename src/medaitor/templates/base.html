@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    
+    <!-- Tailwind CSS for quick styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- HTMX for interactivity -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Alpine.js for simple client-side state -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        .transcript-entry {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-semibold">{{ app_name }}</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-700 hover:text-gray-900">Home</a>
+                    <a href="/api/rules" class="text-gray-700 hover:text-gray-900">Rules</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- WebSocket connection script -->
+    <script>
+        let ws = null;
+        let pc = null;
+        let localStream = null;
+        
+        function connectWebSocket(roomId) {
+            const wsUrl = `ws://localhost:8000/ws/${roomId}`;
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('Connected to room:', roomId);
+                document.getElementById('status').textContent = 'Connected';
+                document.getElementById('status').className = 'text-green-600';
+            };
+            
+            ws.onmessage = async (event) => {
+                const data = JSON.parse(event.data);
+                console.log('Received:', data);
+                
+                switch(data.type) {
+                    case 'transcript':
+                        addTranscript(data);
+                        break;
+                    case 'offer':
+                        await handleOffer(data);
+                        break;
+                    case 'answer':
+                        await handleAnswer(data);
+                        break;
+                    case 'ice-candidate':
+                        await handleIceCandidate(data);
+                        break;
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                document.getElementById('status').textContent = 'Error';
+                document.getElementById('status').className = 'text-red-600';
+            };
+            
+            ws.onclose = () => {
+                console.log('Disconnected');
+                document.getElementById('status').textContent = 'Disconnected';
+                document.getElementById('status').className = 'text-gray-600';
+            };
+        }
+        
+        function addTranscript(data) {
+            const transcriptDiv = document.getElementById('transcript');
+            const entry = document.createElement('div');
+            entry.className = 'transcript-entry p-3 mb-2 bg-white rounded shadow';
+            entry.innerHTML = `
+                <div class="font-semibold text-sm text-gray-600">${data.speaker}</div>
+                <div class="text-gray-800">${data.text}</div>
+                <div class="text-xs text-gray-500 mt-1">${new Date().toLocaleTimeString()}</div>
+            `;
+            transcriptDiv.appendChild(entry);
+            transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
+        }
+        
+        // WebRTC functions placeholder
+        async function startCall() {
+            // TODO: Implement WebRTC call setup
+            console.log('Starting call...');
+        }
+        
+        async function handleOffer(data) {
+            // TODO: Handle WebRTC offer
+        }
+        
+        async function handleAnswer(data) {
+            // TODO: Handle WebRTC answer
+        }
+        
+        async function handleIceCandidate(data) {
+            // TODO: Handle ICE candidate
+        }
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

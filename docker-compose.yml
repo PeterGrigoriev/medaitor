@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+      - ./rules:/app/rules
+      - ./models:/app/models
+    environment:
+      - PYTHONUNBUFFERED=1
+      - WHISPER_MODEL=base
+      - LOG_LEVEL=info
+    depends_on:
+      - redis
+    networks:
+      - medaitor-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - medaitor-network
+
+  # Optional: Coturn for WebRTC TURN server
+  # coturn:
+  #   image: coturn/coturn:latest
+  #   ports:
+  #     - "3478:3478"
+  #     - "3478:3478/udp"
+  #   environment:
+  #     - DETECT_RELAY_IP=1
+  #   networks:
+  #     - medaitor-network
+
+volumes:
+  redis-data:
+
+networks:
+  medaitor-network:
+    driver: bridge

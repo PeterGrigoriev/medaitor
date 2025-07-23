@@ -1,0 +1,60 @@
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+docs/
+# Exclude specific md files but keep README.md
+stack-options.md
+requirements.md
+CLAUDE.md
+
+# Tests
+tests/
+pytest.ini
+.coveragerc
+
+# Development files
+docker-compose.yml
+docker-compose.*.yml
+Makefile
+
+# Models (will be mounted as volume)
+models/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+temp/
+tmp/
+transcripts/

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ app_name }} - Home{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Hero section -->
+    <div class="text-center">
+        <h2 class="text-3xl font-bold text-gray-900">AI-Assisted Conversation Moderator</h2>
+        <p class="mt-2 text-lg text-gray-600">Join or create a room to start a moderated voice conversation</p>
+    </div>
+    
+    <!-- Room creation -->
+    <div class="bg-white shadow rounded-lg p-6" x-data="{ roomName: '', creating: false }">
+        <h3 class="text-lg font-semibold mb-4">Create a New Room</h3>
+        <form @submit.prevent="createRoom()" class="space-y-4">
+            <div>
+                <label for="roomName" class="block text-sm font-medium text-gray-700">Room Name</label>
+                <input 
+                    type="text" 
+                    id="roomName" 
+                    x-model="roomName"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                    placeholder="Enter room name"
+                    required
+                >
+            </div>
+            <button 
+                type="submit"
+                :disabled="creating || !roomName"
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+                <span x-show="!creating">Create Room</span>
+                <span x-show="creating">Creating...</span>
+            </button>
+        </form>
+        
+        <script>
+            function createRoom() {
+                const roomName = Alpine.store('roomName');
+                Alpine.store('creating', true);
+                
+                fetch('/api/rooms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: roomName }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = `/room/${data.id}`;
+                })
+                .catch(error => {
+                    console.error('Error creating room:', error);
+                    Alpine.store('creating', false);
+                });
+            }
+        </script>
+    </div>
+    
+    <!-- Quick join -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-semibold mb-4">Quick Join</h3>
+        <p class="text-gray-600 mb-4">Enter a room ID to join an existing conversation</p>
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="roomId" 
+                class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                placeholder="Room ID"
+            >
+            <button 
+                onclick="joinRoom()"
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+                Join Room
+            </button>
+        </div>
+        
+        <script>
+            function joinRoom() {
+                const roomId = document.getElementById('roomId').value;
+                if (roomId) {
+                    window.location.href = `/room/${roomId}`;
+                }
+            }
+        </script>
+    </div>
+    
+    <!-- Features -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white shadow rounded-lg p-6">
+            <h4 class="font-semibold text-lg mb-2">Real-time Transcription</h4>
+            <p class="text-gray-600">Every word is transcribed in real-time using state-of-the-art AI</p>
+        </div>
+        <div class="bg-white shadow rounded-lg p-6">
+            <h4 class="font-semibold text-lg mb-2">Speaker Identification</h4>
+            <p class="text-gray-600">Know who said what with automatic speaker detection</p>
+        </div>
+        <div class="bg-white shadow rounded-lg p-6">
+            <h4 class="font-semibold text-lg mb-2">Community Rules</h4>
+            <p class="text-gray-600">Conversations are moderated according to community guidelines</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
