@@ -40,6 +40,14 @@ Mediator is an AI-assisted moderator/mediator for spoken conversations. The syst
 - Run tests with: `pytest`
 - Maintain test coverage above 80%
 - Test WebSocket connections with pytest-asyncio
+- UI testing with: `/ui-test` (Puppeteer-based browser automation)
+
+### UI Testing
+- **Command**: `/ui-test` (requires Puppeteer MCP)
+- **Prerequisites**: Application running on localhost:8000
+- **Coverage**: Homepage, navigation, forms, API endpoints, responsive design
+- **Output**: Screenshots in `test-screenshots/`, detailed report in `ui-test-report.md`
+- **Key Checks**: Page load, navigation elements, room creation form, /health and /version APIs
 
 ### Quick Start Commands
 ```bash

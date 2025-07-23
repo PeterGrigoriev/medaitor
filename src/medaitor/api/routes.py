@@ -49,6 +49,17 @@ async def get_room(room_id: str):
     )
 
 
+@router.get("/version")
+async def get_version():
+    """Get application version information."""
+    from medaitor import __version__
+    return {
+        "version": __version__,
+        "app": "Mediator",
+        "description": "AI-assisted conversation moderator"
+    }
+
+
 @router.get("/rules")
 async def get_rules():
     """Get community rules."""

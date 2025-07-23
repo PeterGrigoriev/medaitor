@@ -1,0 +1,16 @@
+{
+  "name": "medaitor-ui-tests",
+  "version": "1.0.0",
+  "description": "UI tests for the Mediator application using Puppeteer",
+  "main": "ui-test.js",
+  "scripts": {
+    "test": "node ui-test.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "puppeteer": "^22.8.2"
+  },
+  "devDependencies": {},
+  "author": "Claude Code",
+  "license": "MIT"
+}
